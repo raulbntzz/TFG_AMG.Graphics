@@ -1,0 +1,21 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.tsx";
+import ContactForm from "../components/ContactForm.tsx";
+---
+
+<Layout title="Contacto - AMG.Graphics">
+	<Navbar client:load />
+
+	<!-- Contenedor del formulario -->
+	<div class="max-w-7xl mx-auto px-2 md:px-4 pt-28 pb-8 md:pb-16">
+		<!-- Título -->
+		<div class="text-center mb-8 md:mb-12">
+			<h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4"><i class="fa-solid fa-envelope"></i>	Contacto</h2>
+			<p class="text-lg md:text-xl text-gray-600">¿Tienes un proyecto en mente? Hablemos</p>
+		</div>
+
+		<!-- Formulario React -->
+		<ContactForm client:load />
+	</div>
+</Layout>
