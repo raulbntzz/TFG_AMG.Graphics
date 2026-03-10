@@ -90,7 +90,21 @@ export default function LoginForm() {
 					/>
 				</div>
 
+				{error && (
+					<div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200">
+						{error}
+					</div>
+				)}
 
+				{success && (
+					<div className="bg-green-50 text-green-600 p-3 rounded-lg text-sm border border-green-200">
+						{success}
+					</div>
+				)}
+
+				<div>
+					<button
+						type="submit"
 						disabled={isSubmitting}
 						className="w-full bg-gray-900 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-800 transition duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
 					>
