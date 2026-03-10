@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const API_URL = 'http://localhost:5047';
+
 export default function ContactForm() {
 	const [formData, setFormData] = useState({
 		nombre: '',
@@ -11,6 +13,8 @@ export default function ContactForm() {
 	});
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [error, setError] = useState('');
+	const [success, setSuccess] = useState('');
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
@@ -23,12 +27,23 @@ export default function ContactForm() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
+		setError('');
+		setSuccess('');
 
 		try {
-			await new Promise(resolve => setTimeout(resolve, 1000));
-			
-			console.log('Datos del formulario:', formData);
-			
+			const res = await fetch(`${API_URL}/api/mensajescontacto`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(formData),
+			});
+
+			if (!res.ok) {
+				const data = await res.json();
+				setError(data.message || 'Error al enviar el mensaje');
+				return;
+			}
+
+			setSuccess('Mensaje enviado correctamente. Pronto nos pondremos en contacto.');
 			setFormData({
 				nombre: '',
 				apellido: '',
@@ -38,7 +53,7 @@ export default function ContactForm() {
 				descripcion: ''
 			});
 		} catch (error) {
-			console.error('Error al enviar:', error);
+			setError('No se pudo conectar con el servidor');
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -146,7 +161,7 @@ export default function ContactForm() {
 					></textarea>
 				</div>
 
-				<div className="pt-4">
+				<div className="pt-2">
 					<button
 						type="submit"
 						disabled={isSubmitting}

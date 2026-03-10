@@ -1,9 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Navbar() {
+	const { isAdmin } = useAuth();
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-	const [desktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
-	const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+	const [galeriaDropdownOpen, setGaleriaDropdownOpen] = useState(false);
+	const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+	const [mobileGaleriaDropdownOpen, setMobileGaleriaDropdownOpen] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [nombreUsuario, setNombreUsuario] = useState('');
+
+	useEffect(() => {
+		const token = localStorage.getItem('token');
+		const usuario = localStorage.getItem('usuario');
+		setIsLoggedIn(!!token);
+		if (usuario) {
+			const parsed = JSON.parse(usuario);
+			setNombreUsuario(parsed.nombre || '');
+		}
+	}, []);
+
+	const handleLogout = () => {
+		localStorage.removeItem('token');
+		localStorage.removeItem('usuario');
+		window.location.href = '/';
+	};
 
 	return (
 		<nav className="fixed top-0 left-0 right-0 bg-white shadow-lg transition-all duration-300 z-50">
@@ -16,11 +37,11 @@ export default function Navbar() {
 					</a>
 					
 					<div className="hidden md:flex items-center space-x-8">
-						<a href="/" className="text-gray-700 hover:text-indigo-600 transition-colors"><i className="fa-solid fa-house"></i> Inicio</a>
+						<a href="/home" className="text-gray-700 hover:text-indigo-600 transition-colors"><i className="fa-solid fa-house"></i> Inicio</a>
 						
 						<div className="relative">
 							<button 
-								onClick={() => setDesktopDropdownOpen(!desktopDropdownOpen)}
+								onClick={() => setGaleriaDropdownOpen(!galeriaDropdownOpen)}
 								className="text-gray-700 hover:text-indigo-600 transition-colors flex items-center gap-1"
 							>
 								<i className="fa-solid fa-images"></i>  Galería
@@ -28,7 +49,7 @@ export default function Navbar() {
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
 								</svg>
 							</button>
-							{desktopDropdownOpen && (
+							{galeriaDropdownOpen && (
 								<div className="absolute bg-white shadow-lg rounded-md mt-2 py-2 w-48 z-50">
 									<a href="/galeria/opcion1" className="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Opción 1</a>
 									<a href="/galeria/opcion2" className="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Opción 2</a>
@@ -39,8 +60,37 @@ export default function Navbar() {
 						
 						<a href="/contacto" className="text-gray-700 hover:text-indigo-600 transition-colors"><i className="fa-solid fa-envelope"></i>  Contacto</a>
 					
-                        <a href="/login" className="text-gray-700 hover:text-indigo-600 transition-colors"><i className="fa-solid fa-arrow-right-to-bracket"></i>  Login</a>
-                    </div>
+					{isAdmin && (
+						<a href="/admin" className="text-gray-700 hover:text-indigo-600 transition-colors font-semibold"><i className="fa-solid fa-gear"></i>  Gestionar</a>
+					)}
+					
+					{isLoggedIn ? (
+						<div className="relative">
+							<button 
+								onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+								className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition-colors"
+							>
+								<i className="fa-solid fa-user"></i>
+								<span>Hola, {nombreUsuario}</span>
+								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+								</svg>
+							</button>
+							{userDropdownOpen && (
+								<div className="absolute right-0 bg-white shadow-lg rounded-md mt-2 py-2 w-48 z-50">
+									<button 
+										onClick={handleLogout}
+										className="w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors flex items-center gap-2"
+									>
+										<i className="fa-solid fa-arrow-right-from-bracket"></i>
+										Cerrar sesión
+									</button>
+								</div>
+							)}
+						</div>
+					) : (
+						<a href="/login" className="text-gray-700 hover:text-indigo-600 transition-colors"><i className="fa-solid fa-arrow-right-to-bracket"></i>  Login</a>
+					)}</div>
 
 					<button 
 						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -54,10 +104,10 @@ export default function Navbar() {
 
 				{mobileMenuOpen && (
 					<div className="md:hidden pb-4">
-						<a href="/" className="block py-2 text-gray-700 hover:text-indigo-600"><i className="fa-solid fa-house"></i>    Inicio</a>
+						<a href="/home" className="block py-2 text-gray-700 hover:text-indigo-600"><i className="fa-solid fa-house"></i>    Inicio</a>
 						<div>
 							<button 
-								onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
+								onClick={() => setMobileGaleriaDropdownOpen(!mobileGaleriaDropdownOpen)}
 								className="w-full text-left py-2 text-gray-700 hover:text-indigo-600 flex items-center gap-1"
 							>
 								<i className="fa-solid fa-images"></i>Galería
@@ -65,7 +115,7 @@ export default function Navbar() {
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
 								</svg>
 							</button>
-							{mobileDropdownOpen && (
+							{mobileGaleriaDropdownOpen && (
 								<div className="pl-4">
 									<a href="/galeria/opcion1" className="block py-2 text-gray-600 hover:text-indigo-600">Opción 1</a>
 									<a href="/galeria/opcion2" className="block py-2 text-gray-600 hover:text-indigo-600">Opción 2</a>
@@ -74,8 +124,16 @@ export default function Navbar() {
 							)}
 						</div>
 						<a href="/contacto" className="block py-2 text-gray-700 hover:text-indigo-600"><i className="fa-solid fa-envelope"></i> Contacto</a>
+						
+						{isAdmin && (
+							<a href="/admin" className="block py-2 text-gray-700 hover:text-indigo-600 font-semibold"><i className="fa-solid fa-gear"></i> Gestionar</a>
+						)}
 
-                        <a href="/login" className="block py-2 text-gray-700 hover:text-indigo-600"><i className="fa-solid fa-arrow-right-to-bracket"></i> Login</a>
+                        {isLoggedIn ? (
+							<button onClick={handleLogout} className="w-full text-left py-2 text-gray-700 hover:text-red-600"><i className="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión</button>
+						) : (
+							<a href="/login" className="block py-2 text-gray-700 hover:text-indigo-600"><i className="fa-solid fa-arrow-right-to-bracket"></i> Login</a>
+						)}
 					</div>
 				)}
 			</div>

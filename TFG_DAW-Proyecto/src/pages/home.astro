@@ -1,0 +1,38 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.tsx";
+import AuthGuard from "../components/AuthGuard.tsx";
+---
+
+<Layout title="AMG.Graphics">
+	<AuthGuard client:load />
+	<Navbar client:load />
+
+	<!-- Contenedor de pagina principal -->
+	<div class="max-w-6xl mx-auto px-4 md:px-8 pt-28 pb-8 md:pb-16">
+		<!-- Título Principal -->
+		<div class="text-center mb-8 md:mb-12">
+			<h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4"><i class="fa-solid fa-house"></i> Inicio</h2>
+			<p class="text-lg md:text-xl text-gray-600">Diseño y Desarrollo Creativo</p>
+		</div>
+
+		<!-- Descripción e introducción -->
+		<section class="bg-white rounded-lg shadow-md p-6 md:p-12">
+			<h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Mi Historia</h3>
+			<div class="text-gray-700 text-base md:text-lg leading-relaxed space-y-4">
+				<p>
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+					Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+				</p>
+				<p>
+					Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+					Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+				</p>
+				<p>
+					Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
+					eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+				</p>
+			</div>
+		</section>
+	</div>
+</Layout>

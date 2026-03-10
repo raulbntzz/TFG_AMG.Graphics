@@ -1,0 +1,36 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.tsx";
+import AuthGuard from "../components/AuthGuard.tsx";
+import AdminGuard from "../components/AdminGuard.tsx";
+---
+
+<Layout title="Gestionar Página - AMG.Graphics">
+	<AuthGuard client:load />
+	<AdminGuard client:load />
+	<Navbar client:load />
+
+	<div class="max-w-7xl mx-auto px-4 md:px-8 pt-28 pb-8 md:pb-16">
+		<div class="text-center mb-12">
+			<h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4"><i class="fa-solid fa-gear"></i> Gestionar Página</h1>
+			<p class="text-lg text-gray-600">Panel de administración</p>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+			<a href="/admin/galeria" class="bg-white rounded-lg shadow-md hover:shadow-lg transition p-6 border-l-4 border-gray-300 hover:border-indigo-500 group">
+				<h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition"><i class="fa-solid fa-images"></i> Gestionar Galería</h3>
+				<p class="text-gray-600">Añadir, editar o eliminar proyectos de la galería</p>
+			</a>
+
+			<a href="/admin/usuarios" class="bg-white rounded-lg shadow-md hover:shadow-lg transition p-6 border-l-4 border-gray-300 hover:border-indigo-500 group">
+				<h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition"><i class="fa-solid fa-users"></i> Gestionar Usuarios</h3>
+				<p class="text-gray-600">Ver y gestionar usuarios registrados</p>
+			</a>
+
+			<a href="/admin/mensajes" class="bg-white rounded-lg shadow-md hover:shadow-lg transition p-6 border-l-4 border-gray-300 hover:border-indigo-500 group">
+				<h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition"><i class="fa-solid fa-envelope"></i> Mensajes de Contacto</h3>
+				<p class="text-gray-600">Ver y responder a mensajes de contacto</p>
+			</a>
+		</div>
+	</div>
+</Layout>

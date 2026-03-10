@@ -2,19 +2,21 @@
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/Navbar.tsx";
 import BasicMasonry from "../../components/Galeria.tsx";
+import AuthGuard from "../../components/AuthGuard.tsx";
 ---
 
-<Layout title="Galería - Opción 2">
+<Layout title="Galería - UI/UX">
+	<AuthGuard client:load />
 	<Navbar client:load />
 
 	<div class="max-w-7xl mx-auto px-4 py-28">
 		<div class="text-center mb-12">
-			<h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Opción 2</h1>
-			<p class="text-lg text-gray-600">Explora mis proyectos más recientes</p>
+			<h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">UI/UX</h1>
+			<p class="text-lg text-gray-600">Diseño de interfaces y experiencia de usuario</p>
 		</div>
 
 		<div class="flex justify-center">
-			<BasicMasonry client:load />
+			<BasicMasonry client:load categoria="UI/UX" />
 		</div>
 	</div>
 </Layout>

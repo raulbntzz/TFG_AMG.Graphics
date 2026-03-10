@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const API_URL = 'http://localhost:5047';
+
 export default function LoginForm() {
 	const [formData, setFormData] = useState({
 		email: '',
@@ -7,6 +9,8 @@ export default function LoginForm() {
 	});
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [error, setError] = useState('');
+	const [success, setSuccess] = useState('');
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -19,14 +23,29 @@ export default function LoginForm() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
+		setError('');
+		setSuccess('');
 
 		try {
-			await new Promise(resolve => setTimeout(resolve, 1000));
-			
-			console.log('Datos de login:', formData);
-			
-		} catch (error) {
-			console.error('Error al iniciar sesión:', error);
+			const res = await fetch(`${API_URL}/api/usuarios/login`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(formData),
+			});
+
+			if (!res.ok) {
+				const data = await res.json();
+				setError(data.message || 'Credenciales incorrectas');
+				return;
+			}
+
+			const data = await res.json();
+			localStorage.setItem('token', data.token);
+			localStorage.setItem('usuario', JSON.stringify(data.usuario));
+			setSuccess('Sesión iniciada correctamente');
+			setTimeout(() => { window.location.href = '/home'; }, 800);
+		} catch (err) {
+			setError('Correo o contraseña incorrectos');
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -71,9 +90,7 @@ export default function LoginForm() {
 					/>
 				</div>
 
-				<div className="pt-4">
-					<button
-						type="submit"
+
 						disabled={isSubmitting}
 						className="w-full bg-gray-900 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-800 transition duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
 					>
@@ -81,6 +98,13 @@ export default function LoginForm() {
 					</button>
 				</div>
 			</form>
+
+			<p className="text-center text-sm text-gray-500 mt-6">
+				¿No tienes cuenta?{' '}
+				<a href="/registro" className="text-gray-900 font-semibold hover:underline">
+					Regístrate
+				</a>
+			</p>
 		</section>
 	);
 }

@@ -2,9 +2,11 @@
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.tsx";
 import ContactForm from "../components/ContactForm.tsx";
+import AuthGuard from "../components/AuthGuard.tsx";
 ---
 
 <Layout title="Contacto - AMG.Graphics">
+	<AuthGuard client:load />
 	<Navbar client:load />
 
 	<!-- Contenedor del formulario -->

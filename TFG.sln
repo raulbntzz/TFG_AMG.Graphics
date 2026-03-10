@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BCKND", "BCKND", "{801CD370-FE00-3A80-9490-3DC230BCABE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API_TFG", "BCKND\API_TFG\API_TFG.csproj", "{CBFCE0CD-4755-73F8-49A6-E2C546259044}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CBFCE0CD-4755-73F8-49A6-E2C546259044}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBFCE0CD-4755-73F8-49A6-E2C546259044}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBFCE0CD-4755-73F8-49A6-E2C546259044}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBFCE0CD-4755-73F8-49A6-E2C546259044}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CBFCE0CD-4755-73F8-49A6-E2C546259044} = {801CD370-FE00-3A80-9490-3DC230BCABE9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7D020301-3806-4515-B3AF-E26F5559FA1A}
+	EndGlobalSection
+EndGlobal

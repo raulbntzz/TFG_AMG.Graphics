@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Masonry from '@mui/lab/Masonry';
 import Modal from '@mui/material/Modal';
@@ -10,60 +10,106 @@ import CardContent from '@mui/material/CardContent';
 interface Image {
   id: number;
   src: string;
+  categoria: string;
   height: number;
   title: string;
   description: string;
 }
 
-const images: Image[] = [
-  { id: 1, src: 'https://picsum.photos/400/300?random=1', height: 300, title: 'Proyecto 1', description: 'Diseño de interfaz moderna para aplicación móvil' },
-  { id: 2, src: 'https://picsum.photos/400/500?random=2', height: 500, title: 'Proyecto 2', description: 'Branding completo para empresa de tecnología' },
-  { id: 3, src: 'https://picsum.photos/400/250?random=3', height: 250, title: 'Proyecto 3', description: 'Ilustraciones digitales para campaña publicitaria' },
-  { id: 4, src: 'https://picsum.photos/400/400?random=4', height: 400, title: 'Proyecto 4', description: 'Diseño web responsive con animaciones' },
-  { id: 5, src: 'https://picsum.photos/400/350?random=5', height: 350, title: 'Proyecto 5', description: 'Desarrollo de identidad visual corporativa' },
-  { id: 6, src: 'https://picsum.photos/400/450?random=6', height: 450, title: 'Proyecto 6', description: 'Fotografía y edición para portafolio profesional' },
-  { id: 7, src: 'https://picsum.photos/400/320?random=7', height: 320, title: 'Proyecto 7', description: 'Diseño de packaging para producto premium' },
-  { id: 8, src: 'https://picsum.photos/400/280?random=8', height: 280, title: 'Proyecto 8', description: 'UI/UX para plataforma de e-commerce' },
-  { id: 9, src: 'https://picsum.photos/400/380?random=9', height: 380, title: 'Proyecto 9', description: 'Arte digital y composición creativa' },
-  { id: 10, src: 'https://picsum.photos/400/420?random=10', height: 420, title: 'Proyecto 10', description: 'Diseño editorial para revista digital' },
-];
+const API_URL = 'http://localhost:5047';
 
-export default function BasicMasonry() {
+interface BasicMasonryProps {
+  categoria?: string;
+}
+
+export default function BasicMasonry({ categoria }: BasicMasonryProps) {
+  const [images, setImages] = useState<Image[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+
+  // Cargar imágenes de la API
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${API_URL}/api/galeria`);
+        if (!response.ok) throw new Error('Error al cargar imágenes');
+        const data: Image[] = await response.json();
+        
+        // Filtrar por categoría si se proporciona
+        const filtradas = categoria 
+          ? data.filter(img => img.categoria.toLowerCase() === categoria.toLowerCase())
+          : data;
+        
+        setImages(filtradas);
+      } catch (err) {
+        console.error('Error fetching images:', err);
+        setImages([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, [categoria]);
 
   const handleOpen = (image: Image) => setSelectedImage(image);
   const handleClose = () => setSelectedImage(null);
 
+  // Construir URL completa de la imagen
+  const getImageUrl = (src: string) => {
+    // Si ya es una URL completa, devolverla
+    if (src.startsWith('http')) return src;
+    
+    // Si empieza con / o uploads/, añadir el dominio
+    if (src.startsWith('/') || src.startsWith('uploads')) {
+      return `${API_URL}/${src}`;
+    }
+    
+    // Si es solo el nombre del archivo, construir la ruta completa
+    return `${API_URL}/uploads/galeria/${src}`;
+  };
+
   return (
     <>
       <Box sx={{ width: '100%', maxWidth: 1200, minHeight: 393 }}>
-        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-          {images.map((image) => (
-            <div key={image.id}>
-              <img
-                src={image.src}
-                alt={image.title}
-                onClick={() => handleOpen(image)}
-                style={{
-                  width: '100%',
-                  display: 'block',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  cursor: 'pointer',
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.boxShadow = '0 8px 12px rgba(0, 0, 0, 0.2)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-                }}
-              />
-            </div>
-          ))}
-        </Masonry>
+        {loading ? (
+          <Box sx={{ textAlign: 'center', padding: '60px 20px' }}>
+            <Typography sx={{ color: '#9ca3af' }}>Cargando galería...</Typography>
+          </Box>
+        ) : images.length === 0 ? (
+          <Box sx={{ textAlign: 'center', padding: '60px 20px' }}>
+            <Typography sx={{ color: '#9ca3af' }}>No hay imágenes en la galería</Typography>
+          </Box>
+        ) : (
+          <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+            {images.map((image) => (
+              <div key={image.id}>
+                <img
+                  src={getImageUrl(image.src)}
+                  alt={image.title}
+                  onClick={() => handleOpen(image)}
+                  style={{
+                    width: '100%',
+                    display: 'block',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 8px 12px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+                  }}
+                />
+              </div>
+            ))}
+          </Masonry>
+        )}
       </Box>
 
       <Modal
@@ -106,7 +152,6 @@ export default function BasicMasonry() {
               sx={{
                 maxWidth: '1200px',
                 width: '90vw',
-                height: { xs: 'auto', md: '450px' },
                 maxHeight: '85vh',
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },
@@ -116,7 +161,7 @@ export default function BasicMasonry() {
             >
               <Box
                 sx={{
-                  flex: { xs: '1', md: '0 0 60%' },
+                  flex: { xs: '0 0 40vh', md: '0 0 50%' },
                   overflow: 'hidden',
                   display: 'flex',
                   alignItems: 'center',
@@ -125,12 +170,12 @@ export default function BasicMasonry() {
                 }}
               >
                 <img
-                  src={selectedImage.src}
+                  src={getImageUrl(selectedImage.src)}
                   alt={selectedImage.title}
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
                   }}
                 />
               </Box>
@@ -145,6 +190,18 @@ export default function BasicMasonry() {
                   overflow: 'auto',
                 }}
               >
+                <Typography 
+                  variant="overline"
+                  sx={{
+                    color: '#6b7280',
+                    fontWeight: 600,
+                    letterSpacing: '0.1em',
+                    marginBottom: '8px',
+                    display: 'block',
+                  }}
+                >
+                  {selectedImage.categoria}
+                </Typography>
                 <Typography 
                   variant="h4" 
                   component="h2" 

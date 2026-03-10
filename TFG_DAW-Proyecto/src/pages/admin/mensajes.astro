@@ -1,0 +1,26 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.tsx";
+import MensajeContactoManagement from "../../components/MensajeContactoManagement.tsx";
+import AdminGuard from "../../components/AdminGuard.tsx";
+---
+
+<Layout title="Gestión de Mensajes - AMG.Graphics">
+	<AdminGuard client:load />
+	<Navbar client:load />
+
+	<div class="max-w-7xl mx-auto px-4 md:px-8 pt-28 pb-8 md:pb-16">
+		<div class="mb-8">
+			<a href="/admin" class="w-fit bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-3 py-2 rounded-lg flex items-center gap-2 transition-colors">
+				<i class="fa-solid fa-arrow-left text-xs"></i> Volver
+			</a>
+		</div>
+
+		<div class="text-center mb-12">
+			<h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4"><i class="fa-solid fa-envelope"></i> Mensajes de Contacto</h1>
+			<p class="text-lg text-gray-600">Ver, editar y eliminar mensajes recibidos desde el formulario de contacto</p>
+		</div>
+
+		<MensajeContactoManagement client:load />
+	</div>
+</Layout>
