@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
+const BLUE = '#182AE6';
+const CYAN = '#8BF3F4';
+const CREAM = '#FFF4E6';
+
 export default function Navbar() {
 	const { isAdmin } = useAuth();
-	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-	const [galeriaDropdownOpen, setGaleriaDropdownOpen] = useState(false);
-	const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-	const [mobileGaleriaDropdownOpen, setMobileGaleriaDropdownOpen] = useState(false);
+	const [userOpen, setUserOpen] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [nombreUsuario, setNombreUsuario] = useState('');
+	const [darkMode, setDarkMode] = useState(false);
+	const [currentPath, setCurrentPath] = useState('');
 
 	useEffect(() => {
+		setCurrentPath(window.location.pathname);
 		const token = localStorage.getItem('token');
 		const usuario = localStorage.getItem('usuario');
 		setIsLoggedIn(!!token);
@@ -18,7 +22,19 @@ export default function Navbar() {
 			const parsed = JSON.parse(usuario);
 			setNombreUsuario(parsed.nombre || '');
 		}
+		const saved = localStorage.getItem('darkMode');
+		if (saved === 'true') {
+			setDarkMode(true);
+			document.documentElement.classList.add('dark');
+		}
 	}, []);
+
+	const toggleDark = () => {
+		const next = !darkMode;
+		setDarkMode(next);
+		localStorage.setItem('darkMode', String(next));
+		document.documentElement.classList.toggle('dark', next);
+	};
 
 	const handleLogout = () => {
 		localStorage.removeItem('token');
@@ -26,117 +42,118 @@ export default function Navbar() {
 		window.location.href = '/';
 	};
 
-	return (
-		<nav className="fixed top-0 left-0 right-0 bg-white shadow-lg transition-all duration-300 z-50">
-			<div className="max-w-7xl mx-auto px-4">
-				<div className="flex justify-between items-center h-16">
-					
-					<a href="/" className="flex items-center gap-2 text-xl md:text-2xl font-bold text-black">
-						<img src="/icono_negro.png" alt="AMG Logo" className="h-8 w-8 md:h-10 md:w-10" />
-						AMG Graphics
-					</a>
-					
-					<div className="hidden md:flex items-center space-x-8">
-						<a href="/home" className="text-gray-700 hover:text-indigo-600 transition-colors"><i className="fa-solid fa-house"></i> Inicio</a>
-						
-						<div className="relative">
-							<button 
-								onClick={() => setGaleriaDropdownOpen(!galeriaDropdownOpen)}
-								className="text-gray-700 hover:text-indigo-600 transition-colors flex items-center gap-1"
-							>
-								<i className="fa-solid fa-images"></i>  Galería
-								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-								</svg>
-							</button>
-							{galeriaDropdownOpen && (
-								<div className="absolute bg-white shadow-lg rounded-md mt-2 py-2 w-48 z-50">
-									<a href="/galeria/opcion1" className="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Opción 1</a>
-									<a href="/galeria/opcion2" className="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Opción 2</a>
-									<a href="/galeria/opcion3" className="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Opción 3</a>
-								</div>
-							)}
-						</div>
-						
-						<a href="/contacto" className="text-gray-700 hover:text-indigo-600 transition-colors"><i className="fa-solid fa-envelope"></i>  Contacto</a>
-					
-					{isAdmin && (
-						<a href="/admin" className="text-gray-700 hover:text-indigo-600 transition-colors font-semibold"><i className="fa-solid fa-gear"></i>  Gestionar</a>
-					)}
-					
-					{isLoggedIn ? (
-						<div className="relative">
-							<button 
-								onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-								className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition-colors"
-							>
-								<i className="fa-solid fa-user"></i>
-								<span>Hola, {nombreUsuario}</span>
-								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-								</svg>
-							</button>
-							{userDropdownOpen && (
-								<div className="absolute right-0 bg-white shadow-lg rounded-md mt-2 py-2 w-48 z-50">
-									<button 
-										onClick={handleLogout}
-										className="w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors flex items-center gap-2"
-									>
-										<i className="fa-solid fa-arrow-right-from-bracket"></i>
-										Cerrar sesión
-									</button>
-								</div>
-							)}
-						</div>
-					) : (
-						<a href="/login" className="text-gray-700 hover:text-indigo-600 transition-colors"><i className="fa-solid fa-arrow-right-to-bracket"></i>  Login</a>
-					)}</div>
+	const isActive = (path: string) => currentPath === path;
 
-					<button 
-						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-						className="md:hidden text-gray-700 focus:outline-none"
+	const linkStyle = (path?: string): React.CSSProperties => ({
+		color: BLUE,
+		fontFamily: 'Satoshi, sans-serif',
+		fontWeight: path && isActive(path) ? '700' : '400',
+		fontSize: '14px',
+		textDecoration: 'none',
+		background: 'transparent',
+		border: 'none',
+		cursor: 'pointer',
+		padding: 0,
+	});
+
+	return (
+		<nav
+			style={{
+				position: 'fixed',
+				top: 0,
+				left: 0,
+				right: 0,
+				zIndex: 50,
+				background: CREAM,
+				height: '48px',
+				display: 'flex',
+				alignItems: 'center',
+				paddingLeft: '2.5vw',
+				paddingRight: '2.5vw',
+			}}
+		>
+			{/* Logo */}
+			<a href="/" style={{ display: 'flex', alignItems: 'center', marginRight: 'auto' }}>
+				<img src="/icono.png" alt="AMG Logo" style={{ height: '32px', width: 'auto' }} />
+			</a>
+
+			{/* Desktop links */}
+			<div
+				className="hidden md:flex"
+				style={{ alignItems: 'center', gap: '2.5rem' }}
+			>
+				<a href="/home" style={linkStyle('/home')}>Inicio</a>
+
+				<a href="/galeria" style={linkStyle('/galeria')}>Galeria</a>
+
+				<a href="/contacto" style={linkStyle('/contacto')}>Contacto</a>
+
+				{isAdmin && (
+					<a href="/admin" style={{ ...linkStyle('/admin')}}>Gestionar</a>
+				)}
+
+				{isLoggedIn ? (
+					<div style={{ position: 'relative' }}>
+						<button onClick={() => setUserOpen(!userOpen)} style={{ ...linkStyle(), display: 'flex', alignItems: 'center', gap: '5px' }}>
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+								<circle cx="12" cy="8" r="4" />
+								<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+							</svg>
+							{nombreUsuario}
+							<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={BLUE} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: '1px' }}>
+								<path d="M19 9l-7 7-7-7" />
+							</svg>
+						</button>
+						{userOpen && (
+							<div style={{
+								position: 'absolute',
+								right: 0,
+								top: 'calc(100% + 8px)',
+								background: CREAM,
+								border: `1px solid rgba(24,42,230,0.15)`,
+								padding: '4px 0',
+								width: '160px',
+								zIndex: 50,
+							}}>
+								<button
+									onClick={handleLogout}
+									style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 16px', color: BLUE, fontFamily: 'Satoshi, sans-serif', fontSize: '14px', background: 'none', border: 'none', cursor: 'pointer' }}
+								>
+									Cerrar sesión
+								</button>
+							</div>
+						)}
+					</div>
+				) : (
+					<a href="/login" style={linkStyle('/login')}>Login</a>
+				)}
+
+				{/* Theme toggles: sun + moon always visible */}
+				<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+					{/* Sun */}
+					<button
+						onClick={() => { if (darkMode) toggleDark(); }}
+						title="Modo claro"
+						style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', opacity: darkMode ? 0.4 : 1, transition: 'opacity 0.2s' }}
 					>
-						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={BLUE}>
+							<path d="M12 2.25a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM12 18a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0112 18zM2.25 12a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75zM18 12a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 0118 12zM6.166 5.106a.75.75 0 011.06 0l1.06 1.06a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zM15.712 15.712a.75.75 0 011.061 0l1.06 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM5.106 17.834a.75.75 0 010-1.06l1.06-1.061a.75.75 0 011.061 1.06l-1.06 1.061a.75.75 0 01-1.061 0zM15.712 8.288a.75.75 0 010-1.061l1.06-1.06a.75.75 0 011.061 1.06l-1.06 1.061a.75.75 0 01-1.061 0zM12 6.75a5.25 5.25 0 100 10.5 5.25 5.25 0 000-10.5z"/>
+						</svg>
+					</button>
+					{/* Moon */}
+					<button
+						onClick={() => { if (!darkMode) toggleDark(); }}
+						title="Modo oscuro"
+						style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', opacity: darkMode ? 1 : 0.4, transition: 'opacity 0.2s' }}
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={BLUE}>
+							<path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/>
 						</svg>
 					</button>
 				</div>
-
-				{mobileMenuOpen && (
-					<div className="md:hidden pb-4">
-						<a href="/home" className="block py-2 text-gray-700 hover:text-indigo-600"><i className="fa-solid fa-house"></i>    Inicio</a>
-						<div>
-							<button 
-								onClick={() => setMobileGaleriaDropdownOpen(!mobileGaleriaDropdownOpen)}
-								className="w-full text-left py-2 text-gray-700 hover:text-indigo-600 flex items-center gap-1"
-							>
-								<i className="fa-solid fa-images"></i>Galería
-								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-								</svg>
-							</button>
-							{mobileGaleriaDropdownOpen && (
-								<div className="pl-4">
-									<a href="/galeria/opcion1" className="block py-2 text-gray-600 hover:text-indigo-600">Opción 1</a>
-									<a href="/galeria/opcion2" className="block py-2 text-gray-600 hover:text-indigo-600">Opción 2</a>
-									<a href="/galeria/opcion3" className="block py-2 text-gray-600 hover:text-indigo-600">Opción 3</a>
-								</div>
-							)}
-						</div>
-						<a href="/contacto" className="block py-2 text-gray-700 hover:text-indigo-600"><i className="fa-solid fa-envelope"></i> Contacto</a>
-						
-						{isAdmin && (
-							<a href="/admin" className="block py-2 text-gray-700 hover:text-indigo-600 font-semibold"><i className="fa-solid fa-gear"></i> Gestionar</a>
-						)}
-
-                        {isLoggedIn ? (
-							<button onClick={handleLogout} className="w-full text-left py-2 text-gray-700 hover:text-red-600"><i className="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión</button>
-						) : (
-							<a href="/login" className="block py-2 text-gray-700 hover:text-indigo-600"><i className="fa-solid fa-arrow-right-to-bracket"></i> Login</a>
-						)}
-					</div>
-				)}
 			</div>
+
+
 		</nav>
 	);
 }

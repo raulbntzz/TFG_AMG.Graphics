@@ -1,23 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const API_URL = 'http://localhost:5047';
+const BLUE = '#182AE6';
+const CREAM = '#FFF4E6';
+
+// Reemplaza por tus imágenes en /public/
+const CAROUSEL_IMAGES = [
+	'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1600&q=80&auto=format&fit=crop',
+	'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80&auto=format&fit=crop',
+	'https://images.unsplash.com/photo-1509343256512-d77a5cb3791b?w=1600&q=80&auto=format&fit=crop',
+	'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1600&q=80&auto=format&fit=crop',
+	'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=1600&q=80&auto=format&fit=crop',
+];
 
 export default function LoginForm() {
-	const [formData, setFormData] = useState({
-		email: '',
-		password: ''
-	});
-
+	const [formData, setFormData] = useState({ email: '', password: '' });
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
+	const [currentSlide, setCurrentSlide] = useState(0);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			setCurrentSlide(prev => (prev + 1) % CAROUSEL_IMAGES.length);
+		}, 5000);
+		return () => clearInterval(timer);
+	}, []);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
-		setFormData(prev => ({
-			...prev,
-			[name]: value
-		}));
+		setFormData(prev => ({ ...prev, [name]: value }));
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -25,26 +37,23 @@ export default function LoginForm() {
 		setIsSubmitting(true);
 		setError('');
 		setSuccess('');
-
 		try {
 			const res = await fetch(`${API_URL}/api/usuarios/login`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(formData),
 			});
-
 			if (!res.ok) {
 				const data = await res.json();
 				setError(data.message || 'Credenciales incorrectas');
 				return;
 			}
-
 			const data = await res.json();
 			localStorage.setItem('token', data.token);
 			localStorage.setItem('usuario', JSON.stringify(data.usuario));
 			setSuccess('Sesión iniciada correctamente');
 			setTimeout(() => { window.location.href = '/home'; }, 800);
-		} catch (err) {
+		} catch {
 			setError('Correo o contraseña incorrectos');
 		} finally {
 			setIsSubmitting(false);
@@ -52,73 +61,96 @@ export default function LoginForm() {
 	};
 
 	return (
-		<section className="bg-white rounded-2xl shadow-lg p-6 md:p-12 border border-gray-200 max-w-md w-full">
-			<div className="mb-8 text-center">
-				<h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Iniciar Sesión</h2>
+		<div className="relative w-full flex items-center justify-center overflow-hidden" style={{ height: '100vh' }}>
+			{CAROUSEL_IMAGES.map((img, i) => (
+				<div
+					key={i}
+					className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000"
+					style={{ backgroundImage: `url('${img}')`, filter: 'grayscale(100%)', opacity: i === currentSlide ? 1 : 0 }}
+				/>
+			))}
+			<div className="absolute inset-0 bg-black/25" />
+
+			{/* Formulario */}
+			<div
+				className="relative z-10 w-full max-w-xl mx-4 py-10 px-10 md:px-14"
+				style={{ background: 'rgba(255, 244, 230, 0.82)', backdropFilter: 'blur(3px)' }}
+			>
+				<div className="mb-8">
+					<h1
+						className="text-5xl md:text-6xl font-black leading-none tracking-tight"
+						style={{ fontFamily: "'LTC Broadway', 'Broadway', 'Georgia', serif", color: '#111111' }}
+					>
+						Iniciar sesión
+					</h1>
+				</div>
+
+				<form onSubmit={handleSubmit} className="space-y-5">
+					<div>
+						<label className="block text-sm mb-1.5" style={{ color: '#111111', fontFamily: 'Satoshi, sans-serif' }}>
+							Correo electrónico*
+						</label>
+						<input
+							type="email" name="email" value={formData.email} onChange={handleChange} required
+							className="w-full px-4 py-4 border outline-none transition-colors"
+							style={{ background: CREAM, borderColor: '#D9CFC4', fontFamily: 'Satoshi, sans-serif', color: '#111111' }}
+							onFocus={e => e.target.style.borderColor = BLUE}
+							onBlur={e => e.target.style.borderColor = '#D9CFC4'}
+						/>
+					</div>
+					<div>
+						<label className="block text-sm mb-1.5" style={{ color: '#111111', fontFamily: 'Satoshi, sans-serif' }}>
+							Contraseña*
+						</label>
+						<input
+							type="password" name="password" value={formData.password} onChange={handleChange} required
+							className="w-full px-4 py-4 border outline-none transition-colors"
+							style={{ background: CREAM, borderColor: '#D9CFC4', fontFamily: 'Satoshi, sans-serif', color: '#111111' }}
+							onFocus={e => e.target.style.borderColor = BLUE}
+							onBlur={e => e.target.style.borderColor = '#D9CFC4'}
+						/>
+					</div>
+
+					{error && <p className="text-sm px-4 py-3 border" style={{ color: '#c0392b', background: '#fff0ee', borderColor: '#f5c6c2', fontFamily: 'Satoshi, sans-serif' }}>{error}</p>}
+					{success && <p className="text-sm px-4 py-3 border" style={{ color: '#1a7f4b', background: '#edfaf3', borderColor: '#b7efd0', fontFamily: 'Satoshi, sans-serif' }}>{success}</p>}
+
+					<div className="flex justify-center pt-2">
+						<button
+							type="submit" disabled={isSubmitting}
+							className="px-10 py-3 font-semibold transition-all hover:opacity-90 disabled:opacity-50"
+							style={{ background: BLUE, color: '#fff', fontFamily: 'Satoshi, sans-serif' }}
+						>
+							{isSubmitting ? 'Iniciando...' : 'Iniciar sesión'}
+						</button>
+					</div>
+				</form>
+
+				<p className="text-center text-sm mt-6" style={{ color: '#111111', fontFamily: 'Satoshi, sans-serif' }}>
+					¿No tienes cuenta?{' '}
+					<a href="/registro" className="font-bold underline underline-offset-2" style={{ color: '#111111' }}>Regístrate</a>
+				</p>
 			</div>
 
-			<form onSubmit={handleSubmit} className="space-y-6">
-				<div>
-					<label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-						Correo Electrónico *
-					</label>
-					<input
-						type="email"
-						id="email"
-						name="email"
-						value={formData.email}
-						onChange={handleChange}
-						required
-						className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-500 outline-none transition bg-white"
-						placeholder="tu@email.com"
-					/>
-				</div>
-
-				<div>
-					<label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
-						Contraseña *
-					</label>
-					<input
-						type="password"
-						id="password"
-						name="password"
-						value={formData.password}
-						onChange={handleChange}
-						required
-						className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-500 outline-none transition bg-white"
-						placeholder="••••••••"
-					/>
-				</div>
-
-				{error && (
-					<div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200">
-						{error}
-					</div>
-				)}
-
-				{success && (
-					<div className="bg-green-50 text-green-600 p-3 rounded-lg text-sm border border-green-200">
-						{success}
-					</div>
-				)}
-
-				<div>
+			{/* Indicadores del carrusel */}
+			<div
+				className="absolute bottom-0 left-0 right-0 flex justify-center items-center gap-3 py-5 z-10"
+				style={{ background: 'rgba(255,244,230,0.88)' }}
+			>
+				{CAROUSEL_IMAGES.map((_, i) => (
 					<button
-						type="submit"
-						disabled={isSubmitting}
-						className="w-full bg-gray-900 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-800 transition duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-					>
-						{isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-					</button>
-				</div>
-			</form>
-
-			<p className="text-center text-sm text-gray-500 mt-6">
-				¿No tienes cuenta?{' '}
-				<a href="/registro" className="text-gray-900 font-semibold hover:underline">
-					Regístrate
-				</a>
-			</p>
-		</section>
+						key={i}
+						onClick={() => setCurrentSlide(i)}
+						className="w-5 h-5 transition-all duration-300 focus:outline-none"
+						style={{
+							background: `rgba(24, 42, 230, ${0.2 + i * 0.2})`,
+							outline: i === currentSlide ? `2px solid ${BLUE}` : 'none',
+							outlineOffset: '2px',
+							transform: i === currentSlide ? 'scale(1.15)' : 'scale(1)',
+						}}
+						aria-label={`Imagen ${i + 1}`}
+					/>
+				))}
+			</div>
+		</div>
 	);
 }
