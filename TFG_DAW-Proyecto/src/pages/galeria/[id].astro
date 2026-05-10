@@ -1,0 +1,14 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.tsx";
+import ProyectoDetalle from "../../components/ProyectoDetalle.tsx";
+
+const { id } = Astro.params;
+---
+
+<Layout title="Proyecto - AMG.Graphics">
+  <Navbar client:load />
+  <ProyectoDetalle id={Number(id)} client:load />
+</Layout>

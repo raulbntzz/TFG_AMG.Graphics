@@ -1,5 +1,43 @@
 import React, { useState, useEffect } from 'react';
 
+const BLUE = 'var(--accent)';
+const CREAM = 'var(--bg)';
+const BLACK = 'var(--text)';
+
+const btnPrimary: React.CSSProperties = {
+  background: 'var(--btn-bg)',
+  color: CREAM,
+  border: 'none',
+  padding: '0.65rem 1.5rem',
+  fontFamily: 'Satoshi, sans-serif',
+  fontSize: '0.9rem',
+  fontWeight: 700,
+  cursor: 'pointer',
+  letterSpacing: '0.03em',
+};
+
+const btnSecondary: React.CSSProperties = {
+  background: 'transparent',
+  color: BLACK,
+  border: `1px solid var(--border)`,
+  padding: '0.65rem 1.5rem',
+  fontFamily: 'Satoshi, sans-serif',
+  fontSize: '0.9rem',
+  fontWeight: 400,
+  cursor: 'pointer',
+};
+
+const btnDanger: React.CSSProperties = {
+  background: '#e63946',
+  color: CREAM,
+  border: 'none',
+  padding: '0.65rem 1.5rem',
+  fontFamily: 'Satoshi, sans-serif',
+  fontSize: '0.9rem',
+  fontWeight: 700,
+  cursor: 'pointer',
+};
+
 interface Mensaje {
   id: number;
   nombre: string;
@@ -20,7 +58,6 @@ const MensajeContactoManagement: React.FC = () => {
 
   const API_URL = 'http://localhost:5047';
 
-  // Fetch mensajes
   const fetchMensajes = async () => {
     try {
       setLoading(true);
@@ -36,20 +73,13 @@ const MensajeContactoManagement: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchMensajes();
-  }, []);
+  useEffect(() => { fetchMensajes(); }, []);
 
-  // Eliminar mensaje
   const handleDelete = async (id: number) => {
     if (!window.confirm('¿Estás seguro de que deseas eliminar este mensaje?')) return;
     try {
-      const response = await fetch(`${API_URL}/api/mensajescontacto/${id}`, {
-        method: 'DELETE',
-      });
-
+      const response = await fetch(`${API_URL}/api/mensajescontacto/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Error al eliminar mensaje');
-
       setSuccessMessage('Mensaje eliminado correctamente');
       fetchMensajes();
       setSelectedMensaje(null);
@@ -59,70 +89,53 @@ const MensajeContactoManagement: React.FC = () => {
     }
   };
 
-  // Formatear fecha
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
+  const DetailRow = ({ label, children }: { label: string; children: React.ReactNode }) => (
+    <div>
+      <p style={{ fontFamily: 'Satoshi, sans-serif', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: BLACK, opacity: 0.5, margin: '0 0 0.25rem 0' }}>{label}</p>
+      <div style={{ fontFamily: 'Satoshi, sans-serif', fontSize: '0.95rem', color: BLACK }}>{children}</div>
+    </div>
+  );
+
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 font-sans text-slate-800">
-      
-      {/* Tabla de mensajes */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+    <div style={{ fontFamily: 'Satoshi, sans-serif', color: BLACK }}>
+
+      {successMessage && (
+        <div style={{ background: 'var(--btn-bg)', color: 'var(--btn-text)', padding: '0.75rem 1.25rem', marginBottom: '1.5rem', fontSize: '0.9rem' }}>{successMessage}</div>
+      )}
+      {error && (
+        <div style={{ background: '#e63946', color: CREAM, padding: '0.75rem 1.25rem', marginBottom: '1.5rem', fontSize: '0.9rem' }}>{error}</div>
+      )}
+
+      <div style={{ border: `1px solid var(--border-subtle)` }}>
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <i className="fa-solid fa-circle-notch fa-spin text-4xl text-blue-500 mb-4"></i>
-            <p className="text-slate-500 font-medium">Cargando mensajes...</p>
-          </div>
+          <div style={{ padding: '4rem', textAlign: 'center', opacity: 0.5 }}>Cargando mensajes...</div>
         ) : mensajes.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-slate-50">
-            <div className="h-16 w-16 bg-slate-200 rounded-full flex items-center justify-center mb-4 text-slate-400">
-              <i className="fa-solid fa-envelope text-2xl"></i>
-            </div>
-            <h3 className="text-lg font-medium text-slate-900">No hay mensajes</h3>
-            <p className="text-slate-500 mt-1 text-center max-w-sm">Aún no has recibido ningún mensaje de contacto</p>
-          </div>
+          <div style={{ padding: '4rem', textAlign: 'center', opacity: 0.5 }}>No hay mensajes de contacto</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Nombre</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Asunto</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Fecha</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Acciones</th>
+                <tr style={{ borderBottom: `2px solid var(--border-subtle)` }}>
+                  {['Nombre', 'Email', 'Asunto', 'Fecha', ''].map(h => (
+                    <th key={h} style={{ padding: '0.9rem 1.25rem', textAlign: h === '' ? 'right' : 'left', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', opacity: 0.5 }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
-                {mensajes.map((mensaje) => (
-                  <tr key={mensaje.id} className="hover:bg-slate-50/80 transition-colors duration-150 group">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">{mensaje.nombre} {mensaje.apellido}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{mensaje.correo}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600 truncate max-w-xs">{mensaje.asunto}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{formatDate(mensaje.fechaEnvio)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => setSelectedMensaje(mensaje)}
-                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors mr-2 focus:outline-none"
-                        title="Ver detalles"
-                      >
-                        <i className="fa-solid fa-eye"></i>
-                      </button>
-                      <button
-                        onClick={() => handleDelete(mensaje.id)}
-                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors focus:outline-none"
-                        title="Eliminar"
-                      >
-                        <i className="fa-solid fa-trash-can"></i>
-                      </button>
+              <tbody>
+                {mensajes.map((m, i) => (
+                  <tr key={m.id} style={{ borderBottom: `1px solid var(--border-subtle)`, background: i % 2 === 0 ? 'transparent' : 'rgba(var(--accent-rgb), 0.03)' }}>
+                    <td style={{ padding: '0.9rem 1.25rem', fontSize: '0.95rem', fontWeight: 700 }}>{m.nombre} {m.apellido}</td>
+                    <td style={{ padding: '0.9rem 1.25rem', fontSize: '0.9rem', opacity: 0.7 }}>{m.correo}</td>
+                    <td style={{ padding: '0.9rem 1.25rem', fontSize: '0.9rem', opacity: 0.7, maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.asunto}</td>
+                    <td style={{ padding: '0.9rem 1.25rem', fontSize: '0.85rem', opacity: 0.55, whiteSpace: 'nowrap' }}>{formatDate(m.fechaEnvio)}</td>
+                    <td style={{ padding: '0.9rem 1.25rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      <button onClick={() => setSelectedMensaje(m)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: BLUE, fontFamily: 'Satoshi, sans-serif', fontSize: '0.85rem', fontWeight: 700, marginRight: '1rem', padding: 0 }}>Ver</button>
+                      <button onClick={() => handleDelete(m.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#e63946', fontFamily: 'Satoshi, sans-serif', fontSize: '0.85rem', fontWeight: 700, padding: 0 }}>Eliminar</button>
                     </td>
                   </tr>
                 ))}
@@ -132,80 +145,41 @@ const MensajeContactoManagement: React.FC = () => {
         )}
       </div>
 
-      {/* Modal de detalles */}
       {selectedMensaje && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all duration-300 scale-100">
-            
-            {/* Header del Modal */}
-            <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h2 className="text-xl font-bold text-slate-800">Detalles del Mensaje</h2>
-              <button 
-                onClick={() => setSelectedMensaje(null)}
-                className="text-slate-400 hover:text-slate-600 bg-white hover:bg-slate-100 rounded-full p-2 transition-colors focus:outline-none"
-              >
-                <i className="fa-solid fa-xmark text-lg"></i>
-              </button>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '1rem' }}>
+          <div style={{ background: CREAM, width: '100%', maxWidth: '520px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.5rem 1.75rem', borderBottom: `1px solid var(--border-subtle)`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ fontFamily: 'LTCBroadway, serif', fontSize: '1.5rem', fontWeight: 400, color: BLACK, margin: 0 }}>Mensaje</h2>
+              <button onClick={() => setSelectedMensaje(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: BLACK, fontSize: '1.25rem', opacity: 0.5, lineHeight: 1, padding: 0 }}>✕</button>
             </div>
 
-            {/* Contenido del Modal */}
-            <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Nombre</label>
-                  <p className="text-slate-900 font-semibold text-sm">{selectedMensaje.nombre}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Apellido</label>
-                  <p className="text-slate-900 font-semibold text-sm">{selectedMensaje.apellido}</p>
-                </div>
+            <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <DetailRow label="Nombre">{selectedMensaje.nombre}</DetailRow>
+                <DetailRow label="Apellido">{selectedMensaje.apellido}</DetailRow>
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-                  <a href={`mailto:${selectedMensaje.correo}`} className="text-blue-600 hover:text-blue-700 hover:underline font-medium text-sm break-all">{selectedMensaje.correo}</a>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Teléfono</label>
-                  <a href={`tel:${selectedMensaje.telefono}`} className="text-blue-600 hover:text-blue-700 hover:underline font-medium text-sm">{selectedMensaje.telefono}</a>
-                </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <DetailRow label="Email">
+                  <a href={`mailto:${selectedMensaje.correo}`} style={{ color: BLUE, textDecoration: 'none', fontFamily: 'Satoshi, sans-serif', fontSize: '0.95rem' }}>{selectedMensaje.correo}</a>
+                </DetailRow>
+                <DetailRow label="Teléfono">
+                  <a href={`tel:${selectedMensaje.telefono}`} style={{ color: BLUE, textDecoration: 'none', fontFamily: 'Satoshi, sans-serif', fontSize: '0.95rem' }}>{selectedMensaje.telefono}</a>
+                </DetailRow>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Asunto</label>
-                <p className="text-slate-900 font-semibold text-sm">{selectedMensaje.asunto}</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Mensaje</label>
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-slate-700 whitespace-pre-wrap text-sm max-h-40 overflow-y-auto">
+              <DetailRow label="Asunto">{selectedMensaje.asunto}</DetailRow>
+              <DetailRow label="Mensaje">
+                <div style={{ background: 'rgba(var(--accent-rgb), 0.04)', border: `1px solid var(--border-subtle)`, padding: '1rem', fontSize: '0.95rem', lineHeight: 1.7, whiteSpace: 'pre-wrap', maxHeight: '160px', overflowY: 'auto', color: BLACK }}>
                   {selectedMensaje.descripcion}
                 </div>
-              </div>
-
-              <div className="pt-2 border-t border-slate-100">
-                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Fecha de envío</label>
-                <p className="text-slate-600 text-sm">{formatDate(selectedMensaje.fechaEnvio)}</p>
-              </div>
+              </DetailRow>
+              <DetailRow label="Fecha de envío">
+                <span style={{ opacity: 0.65, fontSize: '0.9rem' }}>{formatDate(selectedMensaje.fechaEnvio)}</span>
+              </DetailRow>
             </div>
 
-            {/* Footer del Modal */}
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3 justify-end">
-              <button
-                onClick={() => setSelectedMensaje(null)}
-                className="px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 hover:text-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-200"
-              >
-                Cerrar
-              </button>
-              <button
-                onClick={() => {
-                  handleDelete(selectedMensaje.id);
-                }}
-                className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center gap-2"
-              >
-                <i className="fa-solid fa-trash-can"></i>Eliminar
-              </button>
+            <div style={{ padding: '1.25rem 1.75rem', borderTop: `1px solid var(--border-subtle)`, display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+              <button onClick={() => setSelectedMensaje(null)} style={btnSecondary}>Cerrar</button>
+              <button onClick={() => handleDelete(selectedMensaje.id)} style={btnDanger}>Eliminar</button>
             </div>
           </div>
         </div>

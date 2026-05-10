@@ -11,11 +11,15 @@ import Footer from "../components/Footer.tsx";
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/png" href="/icono.png" />
 		<title>{title}</title>
+		<script is:inline>
+			if (localStorage.getItem('darkMode') === 'true') {
+				document.documentElement.classList.add('dark');
+			}
+		</script>
 	</head>
 	<body class="min-h-screen flex flex-col">
 		<slot />
 		<Footer client:load />
 	</body>
-
 	<script src="https://kit.fontawesome.com/29d9af97ad.js" crossorigin="anonymous"></script>
 </html>

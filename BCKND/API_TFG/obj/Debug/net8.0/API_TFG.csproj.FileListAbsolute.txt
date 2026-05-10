@@ -75,7 +75,6 @@ C:\Users\rabem\Desktop\Clase\TFG\BCKND\API_TFG\obj\Debug\net8.0\staticwebassets.
 C:\Users\rabem\Desktop\Clase\TFG\BCKND\API_TFG\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\rabem\Desktop\Clase\TFG\BCKND\API_TFG\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 C:\Users\rabem\Desktop\Clase\TFG\BCKND\API_TFG\obj\Debug\net8.0\swae.build.ex.cache
-C:\Users\rabem\Desktop\Clase\TFG\BCKND\API_TFG\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\rabem\Desktop\Clase\TFG\BCKND\API_TFG\obj\Debug\net8.0\API_TFG.csproj.Up2Date
 C:\Users\rabem\Desktop\Clase\TFG\BCKND\API_TFG\obj\Debug\net8.0\API_TFG.dll
 C:\Users\rabem\Desktop\Clase\TFG\BCKND\API_TFG\obj\Debug\net8.0\refint\API_TFG.dll

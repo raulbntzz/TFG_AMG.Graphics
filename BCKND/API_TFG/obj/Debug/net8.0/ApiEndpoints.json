@@ -78,6 +78,26 @@
         "Name": "Archivo",
         "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
+      },
+      {
+        "Name": "DescripcionLarga",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Proyecto",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Anio",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ImagenesDetalle",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -145,6 +165,26 @@
       {
         "Name": "Archivo",
         "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "DescripcionLarga",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Proyecto",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Anio",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ImagenesDetalle",
+        "Type": "System.String",
         "IsRequired": false
       }
     ],

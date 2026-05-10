@@ -24,27 +24,28 @@ CREATE TABLE mensajes_contacto (
 
 CREATE TABLE galeria (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    src VARCHAR(500) NOT NULL,
-    categoria VARCHAR(100) NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    height INT DEFAULT 400
+    src NVARCHAR(500) NOT NULL,
+    categoria NVARCHAR(200) NOT NULL,
+    title NVARCHAR(200) NOT NULL,
+    description NVARCHAR(500) NOT NULL,
+    descripcion_larga NVARCHAR(MAX) NULL,
+    descripcion_larga_2 NVARCHAR(MAX) NULL,
+    proyecto NVARCHAR(200) NULL,
+    anio NVARCHAR(10) NULL,
+    imagen_intermedia NVARCHAR(500) NULL,
+    caption_intermedia NVARCHAR(500) NULL,
+    imagenes_detalle NVARCHAR(MAX) NULL,
+    caption_detalle_1 NVARCHAR(500) NULL,
+    caption_detalle_2 NVARCHAR(500) NULL
 );
-
-INSERT INTO galeria (src, categoria, title, description, height) VALUES
-('/galeria/proyecto1.jpg', 'UI/UX', 'Proyecto 1', 'Diseño de interfaz moderna para aplicación móvil', 300),
-('/galeria/proyecto2.jpg', 'Branding', 'Proyecto 2', 'Branding completo para empresa de tecnología', 500),
-('/galeria/proyecto3.jpg', 'Ilustración', 'Proyecto 3', 'Ilustraciones digitales para campaña publicitaria', 250),
-('/galeria/proyecto4.jpg', 'Web', 'Proyecto 4', 'Diseño web responsive con animaciones', 400),
-('/galeria/proyecto5.jpg', 'Branding', 'Proyecto 5', 'Desarrollo de identidad visual corporativa', 350);
 
 UPDATE usuarios
 SET rol = 'admin'
 WHERE id = 1;
 
-drop table usuarios;
+drop table galeria;
 
-truncate table usuarios;
+truncate table galeria;
 
 select * from usuarios;
 

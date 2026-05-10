@@ -4,51 +4,37 @@
 @font-face {
 	font-family: 'Satoshi';
 	src: url('/fonts/Satoshi-Light.woff2') format('woff2');
-	font-weight: 300;
-	font-style: normal;
-	font-display: swap;
+	font-weight: 300; font-style: normal; font-display: swap;
 }
 @font-face {
 	font-family: 'Satoshi';
 	src: url('/fonts/Satoshi-Regular.woff2') format('woff2');
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
+	font-weight: 400; font-style: normal; font-display: swap;
 }
 @font-face {
 	font-family: 'Satoshi';
 	src: url('/fonts/Satoshi-Italic.woff2') format('woff2');
-	font-weight: 400;
-	font-style: italic;
-	font-display: swap;
+	font-weight: 400; font-style: italic; font-display: swap;
 }
 @font-face {
 	font-family: 'Satoshi';
 	src: url('/fonts/Satoshi-Medium.woff2') format('woff2');
-	font-weight: 500;
-	font-style: normal;
-	font-display: swap;
+	font-weight: 500; font-style: normal; font-display: swap;
 }
 @font-face {
 	font-family: 'Satoshi';
 	src: url('/fonts/Satoshi-Bold.woff2') format('woff2');
-	font-weight: 700;
-	font-style: normal;
-	font-display: swap;
+	font-weight: 700; font-style: normal; font-display: swap;
 }
 @font-face {
 	font-family: 'Satoshi';
 	src: url('/fonts/Satoshi-Black.woff2') format('woff2');
-	font-weight: 900;
-	font-style: normal;
-	font-display: swap;
+	font-weight: 900; font-style: normal; font-display: swap;
 }
 @font-face {
 	font-family: 'LTCBroadway';
 	src: url('/fonts/LTCBroadway.woff2') format('woff2');
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
+	font-weight: 400; font-style: normal; font-display: swap;
 }
 
 /* ─── Tailwind v4 theme ───────────────────────────────────── */
@@ -61,9 +47,260 @@
 	--color-brand-black: #111111;
 }
 
+/* ─── CSS Variables ───────────────────────────────────────── */
+:root {
+	--bg:             #FFF4E6;
+	--bg-card:        #EDE8DF;
+	--text:           #111111;
+	--accent:         #182AE6;
+	--accent-rgb:     24, 42, 230;
+	--btn-bg:         #182AE6;
+	--btn-text:       #FFF4E6;
+	--border:         #D9CFC4;
+	--border-subtle:  rgba(24, 42, 230, 0.2);
+	--input-bg:       #FFF4E6;
+	--navbar-bg:      #FFF4E6;
+	--overlay-login:  rgba(255, 244, 230, 0.82);
+	--overlay-bar:    rgba(255, 244, 230, 0.88);
+}
+
+html.dark {
+	--bg:             #111111;
+	--bg-card:        #1A1A1A;
+	--text:           #FFF4E6;
+	--accent:         #8BF3F4;
+	--accent-rgb:     139, 243, 244;
+	--btn-bg:         #8BF3F4;
+	--btn-text:       #111111;
+	--border:         #2A2A2A;
+	--border-subtle:  rgba(139, 243, 244, 0.2);
+	--input-bg:       #1A1A1A;
+	--navbar-bg:      #111111;
+	--overlay-login:  rgba(17, 17, 17, 0.88);
+	--overlay-bar:    rgba(17, 17, 17, 0.92);
+}
+
 /* ─── Base ────────────────────────────────────────────────── */
 html, body {
 	font-family: 'Satoshi', sans-serif;
-	color: #111111;
-	background-color: #FFF4E6;
+	color: var(--text);
+	background-color: var(--bg);
+	transition: background-color 0.2s, color 0.2s;
+}
+
+/* ─── Responsive layout helpers ──────────────────────────── */
+
+/* Hero carousel */
+.hero-layout {
+	display: flex;
+	min-height: 440px;
+}
+.hero-image {
+	position: relative;
+	flex: 0 0 55%;
+	overflow: hidden;
+}
+.hero-text {
+	flex: 0 0 45%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	padding-left: 3.5rem;
+	padding-bottom: 2rem;
+}
+
+/* Bio text */
+.bio-text { max-width: 46%; }
+
+/* Aventura grid */
+.aventura-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0 4vw;
+	align-items: end;
+	padding: 0 7vw 3rem;
+}
+
+/* Servicios */
+.servicios-inner { max-width: 55%; }
+
+/* Contacto layout */
+.contacto-top {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0 4vw;
+	align-items: start;
+	padding: 3rem 7vw 0;
+}
+.contacto-form {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0 4vw;
+	align-items: start;
+	padding: 3rem 7vw 5rem;
+}
+
+/* Galería grid categoría */
+.galeria-cat-grid {
+	display: grid;
+	grid-template-columns: 180px 1fr;
+	gap: 0 4vw;
+	align-items: start;
+}
+.galeria-items-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: 0 1.5rem;
+}
+
+/* Detalle proyecto meta */
+.detalle-meta {
+	display: grid;
+	grid-template-columns: auto auto auto;
+	gap: 0 5vw;
+	margin-bottom: 3rem;
+	max-width: 560px;
+}
+
+/* Admin cards */
+.admin-cards-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 2px;
+}
+
+/* Tables — scroll on mobile */
+.table-wrapper { overflow-x: auto; }
+
+/* Navbar mobile */
+.navbar-mobile-menu {
+	display: none;
+	flex-direction: column;
+	position: fixed;
+	top: 48px;
+	left: 0;
+	right: 0;
+	background: var(--navbar-bg);
+	border-top: 1px solid var(--border);
+	padding: 1rem 7vw;
+	gap: 1rem;
+	z-index: 49;
+}
+.navbar-mobile-menu.open { display: flex; }
+.navbar-hamburger { display: none; }
+
+/* ─── Mobile (<768px) ─────────────────────────────────────── */
+@media (max-width: 768px) {
+
+	/* Navbar */
+	.navbar-hamburger {
+		display: flex;
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 4px;
+		color: var(--accent);
+	}
+	.navbar-desktop { display: none !important; }
+
+	/* Hero */
+	.hero-layout {
+		flex-direction: column;
+		min-height: unset;
+	}
+	.hero-image {
+		flex: none;
+		height: 260px;
+	}
+	.hero-text {
+		flex: none;
+		padding-left: 0;
+		padding-top: 1.5rem;
+		padding-bottom: 1.5rem;
+	}
+
+	/* Bio */
+	.bio-text { max-width: 100%; }
+
+	/* Aventura */
+	.aventura-grid {
+		grid-template-columns: 1fr;
+		padding: 0 7vw 2rem;
+	}
+
+	/* Servicios */
+	.servicios-inner { max-width: 100%; }
+
+	/* Contacto */
+	.contacto-top {
+		grid-template-columns: 1fr;
+		padding: 2rem 7vw 0;
+	}
+	.contacto-form {
+		grid-template-columns: 1fr;
+		padding: 2rem 7vw 3rem;
+	}
+
+	/* Galería */
+	.galeria-cat-grid {
+		grid-template-columns: 1fr;
+	}
+	.galeria-items-grid {
+		grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	}
+
+	/* Detalle meta */
+	.detalle-meta {
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+	}
+
+	/* Admin cards */
+	.admin-cards-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	/* Galería lista */
+	.galeria-list-row {
+		grid-template-columns: 1fr auto !important;
+	}
+	.galeria-list-row .list-fecha,
+	.galeria-list-row .list-desc {
+		display: none;
+	}
+
+	/* Detalle imágenes adicionales */
+	.detalle-extras {
+		flex-direction: column !important;
+	}
+	.detalle-extras > div {
+		width: 100% !important;
+		position: static !important;
+		top: auto !important;
+	}
+
+	/* Modales admin — full width */
+	.admin-modal-inner {
+		max-width: 100% !important;
+		margin: 0 !important;
+		max-height: 100vh !important;
+		border-radius: 0 !important;
+	}
+}
+
+/* ─── Tablet (768px–1024px) ───────────────────────────────── */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+	.hero-image { flex: 0 0 50%; }
+	.hero-text  { flex: 0 0 50%; padding-left: 2rem; }
+
+	.bio-text { max-width: 70%; }
+	.servicios-inner { max-width: 75%; }
+
+	.admin-cards-grid { grid-template-columns: repeat(2, 1fr); }
+
+	.galeria-cat-grid { grid-template-columns: 140px 1fr; }
+
+	.contacto-top { gap: 0 3vw; }
+	.contacto-form { gap: 0 3vw; }
 }

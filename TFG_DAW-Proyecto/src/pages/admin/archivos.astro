@@ -1,0 +1,36 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.tsx";
+import AdminGuard from "../../components/AdminGuard.tsx";
+import ArchivosManagement from "../../components/ArchivosManagement.tsx";
+---
+
+<Layout title="Gestión de Archivos - AMG.Graphics">
+  <AdminGuard client:load />
+  <Navbar client:load />
+
+  <div style="background:var(--bg); min-height:100vh; padding-top:56px;">
+    <div style="max-width:1200px; margin:0 auto; padding:3.5rem 7vw 5rem;">
+
+      <a href="/admin" style="display:inline-flex; align-items:center; gap:0.5rem; font-family:'Satoshi',sans-serif; font-size:0.9rem; color:var(--accent); text-decoration:none; margin-bottom:2.5rem; border-bottom:1px solid transparent; transition:border-color 0.2s;" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Volver
+      </a>
+
+      <div style="border-top:2px solid var(--accent); margin-bottom:2rem;"></div>
+
+      <h1 style="font-family:'LTCBroadway',serif; font-size:clamp(2rem,3.5vw,3.2rem); font-weight:400; color:var(--text); margin:0 0 0.5rem 0; line-height:1.1;">
+        Gestión de archivos
+      </h1>
+      <p style="font-family:'Satoshi',sans-serif; font-size:1.05rem; color:var(--text); opacity:0.6; margin:0 0 3rem 0;">
+        Sube y organiza las imágenes y vídeos de tus proyectos
+      </p>
+
+      <ArchivosManagement client:load />
+    </div>
+  </div>
+</Layout>
+
+<style>
+.back-link:hover { border-bottom-color: var(--accent) !important; }
+</style>

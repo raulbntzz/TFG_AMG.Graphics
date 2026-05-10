@@ -1,31 +1,23 @@
 import { useState, useEffect } from 'react';
 
 const API_URL = 'http://localhost:5047';
-const BLUE = '#182AE6';
-const CREAM = '#FFF4E6';
-
-// Reemplaza por tus imágenes en /public/
 const CAROUSEL_IMAGES = [
-	'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=1600&q=80&auto=format&fit=crop',
-	'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1600&q=80&auto=format&fit=crop',
-	'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80&auto=format&fit=crop',
-	'https://images.unsplash.com/photo-1509343256512-d77a5cb3791b?w=1600&q=80&auto=format&fit=crop',
-	'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1600&q=80&auto=format&fit=crop',
+	'../../public/ribera.jpg',
+	'../../public/nodo.jpg',
+	'../../public/alcine.jpg',
+	'../../public/repetir.jpg',
+	'../../public/wonka.jpg',
 ];
 
 export default function RegisterForm() {
-	const [formData, setFormData] = useState({
-		nombre: '', apellido: '', email: '', telefono: '', password: '', confirmPassword: '',
-	});
+	const [formData, setFormData] = useState({ nombre: '', apellido: '', email: '', telefono: '', password: '', confirmPassword: '' });
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
 	const [currentSlide, setCurrentSlide] = useState(0);
 
 	useEffect(() => {
-		const timer = setInterval(() => {
-			setCurrentSlide(prev => (prev + 1) % CAROUSEL_IMAGES.length);
-		}, 5000);
+		const timer = setInterval(() => setCurrentSlide(prev => (prev + 1) % CAROUSEL_IMAGES.length), 5000);
 		return () => clearInterval(timer);
 	}, []);
 
@@ -36,147 +28,104 @@ export default function RegisterForm() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setError('');
-		setSuccess('');
-		if (formData.password !== formData.confirmPassword) {
-			setError('Las contraseñas no coinciden');
-			return;
-		}
+		setError(''); setSuccess('');
+		if (formData.password !== formData.confirmPassword) { setError('Las contraseñas no coinciden'); return; }
 		setIsSubmitting(true);
 		try {
 			const res = await fetch(`${API_URL}/api/usuarios/register`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					nombre: formData.nombre, apellido: formData.apellido,
-					email: formData.email, telefono: formData.telefono, password: formData.password,
-				}),
+				method: 'POST', headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ nombre: formData.nombre, apellido: formData.apellido, email: formData.email, telefono: formData.telefono, password: formData.password }),
 			});
-			if (!res.ok) {
-				const data = await res.json();
-				setError(data.message || 'Error al crear la cuenta');
-				return;
-			}
-			setSuccess('Cuenta creada correctamente. Redirigiendo...');
+			if (!res.ok) { const data = await res.json(); setError(data.message || 'Error al crear la cuenta'); return; }
+			setSuccess('Cuenta creada. Redirigiendo...');
 			setFormData({ nombre: '', apellido: '', email: '', telefono: '', password: '', confirmPassword: '' });
 			setTimeout(() => { window.location.href = '/login'; }, 800);
-		} catch {
-			setError('No se pudo conectar con el servidor');
-		} finally {
-			setIsSubmitting(false);
-		}
+		} catch { setError('No se pudo conectar con el servidor'); }
+		finally { setIsSubmitting(false); }
 	};
 
-	const inputStyle: React.CSSProperties = {
-		background: CREAM,
-		borderColor: '#D9CFC4',
-		fontFamily: 'Satoshi, sans-serif',
-		color: '#111111',
+	const inputS: React.CSSProperties = {
+		width: '100%', padding: '1rem', border: '1px solid var(--border)',
+		background: 'var(--input-bg)', color: 'var(--text)',
+		fontFamily: 'Satoshi, sans-serif', fontSize: '1rem', outline: 'none', boxSizing: 'border-box',
 	};
+	const labelS: React.CSSProperties = { display: 'block', fontSize: '0.95rem', marginBottom: '0.5rem', color: 'var(--text)', fontFamily: 'Satoshi, sans-serif' };
 
 	return (
-		<div className="relative w-full flex items-center justify-center overflow-hidden" style={{ minHeight: '100vh' }}>
+		<div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', minHeight: '100vh' }}>
 			{CAROUSEL_IMAGES.map((img, i) => (
-				<div
-					key={i}
-					className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000"
-					style={{ backgroundImage: `url('${img}')`, filter: 'grayscale(100%)', opacity: i === currentSlide ? 1 : 0 }}
-				/>
+				<div key={i} style={{
+					position: 'absolute', inset: 0, backgroundImage: `url('${img}')`,
+					backgroundSize: 'cover', backgroundPosition: 'center',
+					filter: 'grayscale(100%)', opacity: i === currentSlide ? 1 : 0, transition: 'opacity 1s',
+				}} />
 			))}
-			<div className="absolute inset-0 bg-black/25" />
+			<div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.25)' }} />
 
-			{/* Formulario */}
-			<div
-				className="relative z-10 w-full max-w-xl mx-4 my-20 py-10 px-10 md:px-14"
-				style={{ background: 'rgba(255, 244, 230, 0.82)', backdropFilter: 'blur(3px)' }}
-			>
-				<div className="mb-8 text-center">
-					<h1
-						className="text-4xl md:text-5xl font-black leading-tight"
-						style={{ fontFamily: "'LTC Broadway', 'Broadway', 'Georgia', serif", color: '#111111' }}
-					>
-						Crear cuenta
-					</h1>
-				</div>
+			<div style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '560px', margin: '5rem 1rem', padding: '2.5rem 2rem', background: 'var(--overlay-login)', backdropFilter: 'blur(3px)' }}>
+				<h1 style={{ fontFamily: 'LTCBroadway, serif', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 400, lineHeight: 1, color: 'var(--text)', margin: '0 0 2rem', textAlign: 'center' }}>
+					Crear cuenta
+				</h1>
 
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<div className="grid grid-cols-2 gap-4">
+				<form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+					<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
 						<div>
-							<label className="block text-sm mb-1.5" style={{ color: '#111111', fontFamily: 'Satoshi, sans-serif' }}>Nombre*</label>
-							<input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required
-								className="w-full px-4 py-4 border outline-none transition-colors" style={inputStyle}
-								onFocus={e => e.target.style.borderColor = BLUE} onBlur={e => e.target.style.borderColor = '#D9CFC4'} />
+							<label style={labelS}>Nombre*</label>
+							<input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required style={inputS}
+								onFocus={e => e.target.style.borderColor = 'var(--accent)'} onBlur={e => e.target.style.borderColor = 'var(--border)'} />
 						</div>
 						<div>
-							<label className="block text-sm mb-1.5" style={{ color: '#111111', fontFamily: 'Satoshi, sans-serif' }}>Apellido*</label>
-							<input type="text" name="apellido" value={formData.apellido} onChange={handleChange} required
-								className="w-full px-4 py-4 border outline-none transition-colors" style={inputStyle}
-								onFocus={e => e.target.style.borderColor = BLUE} onBlur={e => e.target.style.borderColor = '#D9CFC4'} />
+							<label style={labelS}>Apellido*</label>
+							<input type="text" name="apellido" value={formData.apellido} onChange={handleChange} required style={inputS}
+								onFocus={e => e.target.style.borderColor = 'var(--accent)'} onBlur={e => e.target.style.borderColor = 'var(--border)'} />
 						</div>
 					</div>
 					<div>
-						<label className="block text-sm mb-1.5" style={{ color: '#111111', fontFamily: 'Satoshi, sans-serif' }}>Correo electrónico*</label>
-						<input type="email" name="email" value={formData.email} onChange={handleChange} required
-							className="w-full px-4 py-4 border outline-none transition-colors" style={inputStyle}
-							onFocus={e => e.target.style.borderColor = BLUE} onBlur={e => e.target.style.borderColor = '#D9CFC4'} />
+						<label style={labelS}>Correo electrónico*</label>
+						<input type="email" name="email" value={formData.email} onChange={handleChange} required style={inputS}
+							onFocus={e => e.target.style.borderColor = 'var(--accent)'} onBlur={e => e.target.style.borderColor = 'var(--border)'} />
 					</div>
 					<div>
-						<label className="block text-sm mb-1.5" style={{ color: '#111111', fontFamily: 'Satoshi, sans-serif' }}>Teléfono</label>
-						<input type="tel" name="telefono" value={formData.telefono} onChange={handleChange}
-							className="w-full px-4 py-4 border outline-none transition-colors" style={inputStyle}
-							onFocus={e => e.target.style.borderColor = BLUE} onBlur={e => e.target.style.borderColor = '#D9CFC4'} />
+						<label style={labelS}>Teléfono</label>
+						<input type="tel" name="telefono" value={formData.telefono} onChange={handleChange} style={inputS}
+							onFocus={e => e.target.style.borderColor = 'var(--accent)'} onBlur={e => e.target.style.borderColor = 'var(--border)'} />
 					</div>
 					<div>
-						<label className="block text-sm mb-1.5" style={{ color: '#111111', fontFamily: 'Satoshi, sans-serif' }}>Contraseña*</label>
-						<input type="password" name="password" value={formData.password} onChange={handleChange} required
-							className="w-full px-4 py-4 border outline-none transition-colors" style={inputStyle}
-							onFocus={e => e.target.style.borderColor = BLUE} onBlur={e => e.target.style.borderColor = '#D9CFC4'} />
+						<label style={labelS}>Contraseña*</label>
+						<input type="password" name="password" value={formData.password} onChange={handleChange} required style={inputS}
+							onFocus={e => e.target.style.borderColor = 'var(--accent)'} onBlur={e => e.target.style.borderColor = 'var(--border)'} />
 					</div>
 					<div>
-						<label className="block text-sm mb-1.5" style={{ color: '#111111', fontFamily: 'Satoshi, sans-serif' }}>Confirmar contraseña*</label>
-						<input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required
-							className="w-full px-4 py-4 border outline-none transition-colors" style={inputStyle}
-							onFocus={e => e.target.style.borderColor = BLUE} onBlur={e => e.target.style.borderColor = '#D9CFC4'} />
+						<label style={labelS}>Confirmar contraseña*</label>
+						<input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required style={inputS}
+							onFocus={e => e.target.style.borderColor = 'var(--accent)'} onBlur={e => e.target.style.borderColor = 'var(--border)'} />
 					</div>
 
-					{error && <p className="text-sm px-4 py-3 border" style={{ color: '#c0392b', background: '#fff0ee', borderColor: '#f5c6c2', fontFamily: 'Satoshi, sans-serif' }}>{error}</p>}
-					{success && <p className="text-sm px-4 py-3 border" style={{ color: '#1a7f4b', background: '#edfaf3', borderColor: '#b7efd0', fontFamily: 'Satoshi, sans-serif' }}>{success}</p>}
+					{error && <p style={{ color: '#c0392b', background: '#fff0ee', border: '1px solid #f5c6c2', padding: '0.75rem', fontSize: '0.9rem', margin: 0 }}>{error}</p>}
+					{success && <p style={{ color: '#1a7f4b', background: '#edfaf3', border: '1px solid #b7efd0', padding: '0.75rem', fontSize: '0.9rem', margin: 0 }}>{success}</p>}
 
-					<div className="flex justify-center pt-2">
-						<button
-							type="submit" disabled={isSubmitting}
-							className="px-10 py-3 font-semibold transition-all hover:opacity-90 disabled:opacity-50"
-							style={{ background: BLUE, color: '#fff', fontFamily: 'Satoshi, sans-serif' }}
-						>
+					<div style={{ display: 'flex', justifyContent: 'center', paddingTop: '0.5rem' }}>
+						<button type="submit" disabled={isSubmitting}
+							style={{ background: 'var(--btn-bg)', color: 'var(--btn-text)', border: 'none', padding: '0.75rem 2.5rem', fontFamily: 'Satoshi, sans-serif', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', opacity: isSubmitting ? 0.6 : 1 }}>
 							{isSubmitting ? 'Creando cuenta...' : 'Crear cuenta'}
 						</button>
 					</div>
 				</form>
 
-				<p className="text-center text-sm mt-6" style={{ color: '#111111', fontFamily: 'Satoshi, sans-serif' }}>
+				<p style={{ textAlign: 'center', fontSize: '0.9rem', marginTop: '1.5rem', color: 'var(--text)', fontFamily: 'Satoshi, sans-serif' }}>
 					¿Ya tienes cuenta?{' '}
-					<a href="/login" className="font-bold underline underline-offset-2" style={{ color: '#111111' }}>Inicia sesión</a>
+					<a href="/login" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Inicia sesión</a>
 				</p>
 			</div>
 
-			{/* Indicadores del carrusel */}
-			<div
-				className="absolute bottom-0 left-0 right-0 flex justify-center items-center gap-3 py-5 z-10"
-				style={{ background: 'rgba(255,244,230,0.88)' }}
-			>
+			<div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', padding: '1rem', zIndex: 10, background: 'var(--overlay-bar)' }}>
 				{CAROUSEL_IMAGES.map((_, i) => (
-					<button
-						key={i}
-						onClick={() => setCurrentSlide(i)}
-						className="w-5 h-5 transition-all duration-300 focus:outline-none"
-						style={{
-							background: `rgba(24, 42, 230, ${0.2 + i * 0.2})`,
-							outline: i === currentSlide ? `2px solid ${BLUE}` : 'none',
-							outlineOffset: '2px',
-							transform: i === currentSlide ? 'scale(1.15)' : 'scale(1)',
-						}}
-						aria-label={`Imagen ${i + 1}`}
-					/>
+					<button key={i} onClick={() => setCurrentSlide(i)} style={{
+						width: '18px', height: '18px', border: 'none', cursor: 'pointer', padding: 0, borderRadius: 0,
+						background: `rgba(var(--accent-rgb), ${0.2 + i * 0.2})`,
+						outline: i === currentSlide ? '2px solid var(--accent)' : 'none',
+						outlineOffset: '2px', transform: i === currentSlide ? 'scale(1.15)' : 'scale(1)', transition: 'all 0.3s',
+					}} />
 				))}
 			</div>
 		</div>

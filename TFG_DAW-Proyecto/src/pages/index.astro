@@ -1,10 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.tsx";
-import SessionChecker from "../components/SessionChecker.tsx";
+import HomePage from "../components/HomePage.tsx";
 ---
 
-<Layout title="Login - AMG.Graphics">
-	<Navbar client:load />
-	<SessionChecker client:load />
+<Layout title="AMG.Graphics">
+  <Navbar client:load />
+  <HomePage client:load />
 </Layout>

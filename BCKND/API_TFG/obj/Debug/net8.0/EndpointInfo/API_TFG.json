@@ -105,6 +105,18 @@
                   "Archivo": {
                     "type": "string",
                     "format": "binary"
+                  },
+                  "DescripcionLarga": {
+                    "type": "string"
+                  },
+                  "Proyecto": {
+                    "type": "string"
+                  },
+                  "Anio": {
+                    "type": "string"
+                  },
+                  "ImagenesDetalle": {
+                    "type": "string"
                   }
                 }
               },
@@ -122,6 +134,18 @@
                   "style": "form"
                 },
                 "Archivo": {
+                  "style": "form"
+                },
+                "DescripcionLarga": {
+                  "style": "form"
+                },
+                "Proyecto": {
+                  "style": "form"
+                },
+                "Anio": {
+                  "style": "form"
+                },
+                "ImagenesDetalle": {
                   "style": "form"
                 }
               }
@@ -205,6 +229,18 @@
                   "Archivo": {
                     "type": "string",
                     "format": "binary"
+                  },
+                  "DescripcionLarga": {
+                    "type": "string"
+                  },
+                  "Proyecto": {
+                    "type": "string"
+                  },
+                  "Anio": {
+                    "type": "string"
+                  },
+                  "ImagenesDetalle": {
+                    "type": "string"
                   }
                 }
               },
@@ -222,6 +258,18 @@
                   "style": "form"
                 },
                 "Archivo": {
+                  "style": "form"
+                },
+                "DescripcionLarga": {
+                  "style": "form"
+                },
+                "Proyecto": {
+                  "style": "form"
+                },
+                "Anio": {
+                  "style": "form"
+                },
+                "ImagenesDetalle": {
                   "style": "form"
                 }
               }
@@ -559,6 +607,22 @@
           "height": {
             "type": "integer",
             "format": "int32"
+          },
+          "descripcionLarga": {
+            "type": "string",
+            "nullable": true
+          },
+          "proyecto": {
+            "type": "string",
+            "nullable": true
+          },
+          "anio": {
+            "type": "string",
+            "nullable": true
+          },
+          "imagenesDetalle": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -2,20 +2,27 @@ using API_TFG.Data;
 using API_TFG.Repositories;
 using API_TFG.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition =
+            System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -66,7 +73,6 @@ builder.Services.AddScoped<MensajeContactoService>();
 
 builder.Services.AddScoped<IGaleriaRepository, GaleriaRepository>();
 builder.Services.AddScoped<GaleriaService>();
-builder.Services.AddScoped<FileUploadService>();
 
 builder.Services.AddCors(options =>
 {
@@ -76,6 +82,11 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
+});
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 100 * 1024 * 1024;
 });
 
 var app = builder.Build();
@@ -91,29 +102,19 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-var galeriaPath = builder.Configuration["FileUpload:GaleriaPath"];
-if (!string.IsNullOrEmpty(galeriaPath) && Directory.Exists(galeriaPath))
+var uploadsPath = configuration["FileUpload:GaleriaPath"];
+if (!string.IsNullOrEmpty(uploadsPath) && Directory.Exists(uploadsPath))
 {
     app.UseStaticFiles(new StaticFileOptions
     {
-        FileProvider = new PhysicalFileProvider(galeriaPath),
-        RequestPath = "/uploads/galeria"
+        FileProvider = new PhysicalFileProvider(uploadsPath),
+        RequestPath = "/uploads"
     });
 }
 
 app.UseCors("Dev");
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
-try
-{
-    app.Run();
-}
-catch (Exception ex)
-{
-    Console.Error.WriteLine($"Error fatal: {ex}");
-    throw;
-}
+app.Run();

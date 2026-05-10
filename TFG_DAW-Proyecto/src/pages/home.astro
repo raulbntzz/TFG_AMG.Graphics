@@ -1,12 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.tsx";
-import AuthGuard from "../components/AuthGuard.tsx";
 import HomePage from "../components/HomePage.tsx";
 ---
 
 <Layout title="Inicio - AMG.Graphics">
-	<AuthGuard client:load />
 	<Navbar client:load />
 	<HomePage client:load />
 </Layout>
